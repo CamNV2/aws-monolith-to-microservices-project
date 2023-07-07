@@ -1,0 +1,47 @@
+version: 2.1
+
+jobs:
+  init-microservices-application:
+    docker:
+      - image: circleci/node:14.17.6
+    steps:
+      - checkout
+  build-docker:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Build docker container
+          command: |
+            echo "--------- The images - Building ------------"
+
+            docker build -t udagram-api-feed ./udagram-api-feed
+            docker tag udagram-api-feed camnv2603/udagram-api-feed:v1
+
+            docker build -t udagram-api-user ./udagram-api-user
+            docker tag udagram-api-user camnv2603/udagram-api-user:v1
+            
+            docker build -t udagram-frontend ./udagram-frontend
+            docker tag udagram-frontend camnv2603/udagram-frontend:v1
+
+            docker build -t udagram-reverseproxy ./udagram-reverseproxy
+            docker tag udagram-reverseproxy camnv2603/reverseproxy:v1
+
+            echo "-------- All images succesfully built----------"
+
+            echo " ------- login in to hub--------"
+
+            docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+
+            echo "-------------- Pushing images to dockerhub-------"
+            
+            docker push camnv2603/udagram-api-feed:v1
+            docker push camnv2603/udagram-api-user:v1
+            docker push camnv2603/udagram-frontend:v1
+            docker push camnv2603/reverseproxy:v1
+workflows:
+  default:
+    jobs:
+      - init-microservices-application
+      - build-docker:
+          requires: [init-microservices-application]
