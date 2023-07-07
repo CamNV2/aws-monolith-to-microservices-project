@@ -3,7 +3,7 @@
 export POSTGRES_USERNAME=postgres
 export POSTGRES_PASSWORD=
 export POSTGRES_HOST=
-export POSTGRES_DB=postgres
+export POSTGRES_DB=
 export AWS_BUCKET=
 export AWS_REGION=us-east-1
 export AWS_PROFILE=default
